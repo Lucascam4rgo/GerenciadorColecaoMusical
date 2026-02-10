@@ -161,7 +161,7 @@ public class ArtistDAOJDBC implements ArtistDAO {
 
     }
 
-    protected Artist instantializeArtist(ResultSet rs) throws SQLException {
+    private static Artist instantializeArtist(ResultSet rs) throws SQLException {
         Artist artist = new Artist();
 
         artist.setId(rs.getInt("id"));

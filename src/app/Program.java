@@ -1,12 +1,10 @@
 package app;
 
-import model.dao.AlbumDAO;
-import model.dao.ArtistDAO;
-import model.dao.DaoFactory;
-import model.dao.MusicDAO;
+import model.dao.*;
 import model.dao.impl.ArtistDAOJDBC;
 import model.entities.Album;
 import model.entities.Artist;
+import model.entities.Track;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +18,7 @@ public class Program {
 
         ArtistDAO artistDao = DaoFactory.createArtistDao();
         AlbumDAO albumDAO = DaoFactory.createAlbumDao();
+        TrackDAO trackDAO = DaoFactory.createTrackDao();
 
         // Teste 1 - Insert de Artista
         //Artist artist = new Artist(null, "Paramore", "Rock", "United States");
@@ -78,10 +77,32 @@ public class Program {
 //                "Nome do artista: " + album.getArtist().getName());
 
         // Teste 11 - Achando o Álbum pelo artista e titulo
-        Album album = new Album(null, "this", null,
-                new Artist(null, "more", null, null));
+//        Album album = new Album(null, "this", null,
+//                new Artist(null, "more", null, null));
+//
+//        System.out.println(albumDAO.searchByArtistAndTitle(album));
 
-        System.out.println(albumDAO.searchByArtistAndTitle(album));
+        // Teste 12 - Listando todos os albuns e seus artistas
+
+//        albumDAO.listAll().forEach(System.out::println);
+
+        // Teste 13 - Inserindo tracks
+//        trackDAO.save(new Track(null, "Foreword", 199, new Album(1, null, null, null)));
+//        trackDAO.save(new Track(null, "Where This Flower Blooms", 194, new Album(1, null, null, null)));
+//        trackDAO.save(new Track(null, "See You Again", 180, new Album(1, null, null, null)));
+//        trackDAO.save(new Track(null, "Who Dat Boy", 206, new Album(1, null, null, null)));
+//        trackDAO.save(new Track(null, "Garden Shed", 223, new Album(1, null, null, null)));
+
+        // Teste 14 - Achando track pelo ID
+
+        //System.out.println(trackDAO.searchByID(5));
+
+        // Teste 15 - List All dos tracks
+
+        trackDAO.listAll().forEach(System.out::println);
+
+
+
 
 
     }

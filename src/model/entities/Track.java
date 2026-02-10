@@ -6,18 +6,19 @@ public class Track {
 
     private Integer id;
     private String title;
-    private Duration duration;
-    private Integer album_id;
+    private Integer duration;
+
+    private Album album;
 
     public Track() {
 
     }
 
-    public Track(Integer id, String title, Duration duration, Integer album_id) {
+    public Track(Integer id, String title, Integer duration, Album album) {
         this.id = id;
         this.title = title;
         this.duration = duration;
-        this.album_id = album_id;
+        this.album = album;
     }
 
     public Integer getId() {
@@ -36,19 +37,29 @@ public class Track {
         this.title = title;
     }
 
-    public Duration getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(Duration duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
-    public Integer getAlbum_id() {
-        return album_id;
+    public Album getAlbum() {
+        return album;
     }
 
-    public void setAlbum_id(Integer album_id) {
-        this.album_id = album_id;
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
+
+    @Override
+    public String toString() {
+        return "Track{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", duration=" + duration +
+                ", album=" + album +
+                '}';
     }
 }

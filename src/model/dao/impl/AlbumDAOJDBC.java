@@ -40,7 +40,9 @@ public class AlbumDAOJDBC implements AlbumDAO {
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                return instantializeAlbum(rs);
+                Artist artist = instantializeArtist(rs);
+
+                return instantializeAlbum(rs, artist);
             }
 
             return null;
@@ -48,6 +50,10 @@ public class AlbumDAOJDBC implements AlbumDAO {
         }
         catch (SQLException sql) {
             throw new dbException(sql.getMessage());
+        }
+        finally {
+            DB.closePS(ps);
+            DB.closeRS(rs);
         }
     }
 
@@ -70,7 +76,9 @@ public class AlbumDAOJDBC implements AlbumDAO {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Album album = instantializeAlbum(rs);
+                Artist artist = instantializeArtist(rs);
+
+                Album album = instantializeAlbum(rs, artist);
                 albums.add(album);
             }
 
@@ -169,6 +177,9 @@ public class AlbumDAOJDBC implements AlbumDAO {
         } catch (SQLException sql) {
             throw new dbException(sql.getMessage());
         }
+        finally {
+            DB.closePS(ps);
+        }
 
     }
 
@@ -209,20 +220,65 @@ public class AlbumDAOJDBC implements AlbumDAO {
         catch (SQLException sql) {
             throw new dbException(sql.getMessage());
         }
+        finally {
+            DB.closePS(ps);
+            DB.closeRS(rs);
+        }
 
     }
 
     @Override
     public List<Album> listAll() {
-        return List.of();
-    }
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-    protected Album instantializeAlbum(ResultSet rs) throws SQLException {
+        List<Album> albums = new ArrayList<>();
+        Map<Integer, Artist> artistMap = new HashMap<>();
 
+        try {
+
+            ps = conn.prepareStatement("SELECT album.*, artist.name as \"name_artist\" \n" +
+                    "FROM album INNER JOIN artist\n" +
+                    "ON album.artist_id = artist.id\n" +
+                    "order by album.id");
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                Artist artist = artistMap.get(rs.getInt("artist_id"));
+
+                if (artist == null) {
+                    artistMap.put(rs.getInt("artist_id"), artist = instantializeArtist(rs));
+                }
+
+                Album album = instantializeAlbum(rs, artist);
+
+                albums.add(album);
+
+            }
+
+            return albums;
+        }
+        catch (SQLException sql){
+            throw new dbException(sql.getMessage());
+        }
+        finally {
+            DB.closePS(ps);
+            DB.closeRS(rs);
+        }
+}
+
+    private static Artist instantializeArtist(ResultSet rs) throws SQLException {
         Artist artist = new Artist();
 
         artist.setId(rs.getInt("artist_id"));
         artist.setName(rs.getString("name_artist"));
+
+        return artist;
+    }
+
+    private static Album instantializeAlbum(ResultSet rs, Artist artist) throws SQLException {
 
         Album album = new Album();
 

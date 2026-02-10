@@ -3,6 +3,7 @@ package model.dao;
 import db.DB;
 import model.dao.impl.AlbumDAOJDBC;
 import model.dao.impl.ArtistDAOJDBC;
+import model.dao.impl.TrackDAOJDBC;
 
 public class DaoFactory {
 
@@ -12,6 +13,10 @@ public class DaoFactory {
 
     public static AlbumDAO createAlbumDao() {
         return new AlbumDAOJDBC(DB.getConn());
+    }
+
+    public static TrackDAO createTrackDao() {
+        return new TrackDAOJDBC(DB.getConn());
     }
 
 }

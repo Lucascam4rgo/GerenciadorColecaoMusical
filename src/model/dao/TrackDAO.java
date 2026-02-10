@@ -6,6 +6,4 @@ import java.util.List;
 
 public interface TrackDAO extends MusicDAO<Track> {
 
-    List<Track> tracks();
-
 }

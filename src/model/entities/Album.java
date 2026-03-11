@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class Album {
 
+    SimpleDateFormat dfmt = new SimpleDateFormat("dd/MM/yyyy");
+
     private Integer id;
     private String title;
     private Date release_year;
@@ -56,12 +58,8 @@ public class Album {
 
     @Override
     public String toString() {
-        return "Album{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", release_year=" + release_year +
-                ", artistID=" + artist.getId() +
-                ", artistName=" + artist.getName() +
-                '}';
+        return "Album found: ID = " + id + ", Title = " + title + "," +
+                " Release = " + dfmt.format(release_year) + "," +
+                " Artist ID = " + artist.getId() + ", Artist Name = " + artist.getName();
     }
 }

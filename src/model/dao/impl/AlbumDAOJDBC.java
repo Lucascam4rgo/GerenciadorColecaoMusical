@@ -31,11 +31,11 @@ public class AlbumDAOJDBC implements AlbumDAO {
             ps = conn.prepareStatement("select album.*, artist.name as \"name_artist\"\n" +
                     "from album inner join artist\n" +
                     "on album.artist_id = artist.id\n" +
-                    "where LOWER(album.title) LIKE LOWER(?) \n" +
-                    "and LOWER(artist.name) LIKE LOWER(?);");
+                    "where LOWER(album.title) = LOWER(?) \n" +
+                    "and LOWER(artist.name) = LOWER(?)");
 
-            ps.setString(1, "%" + album.getTitle() + "%");
-            ps.setString(2, "%" + album.getArtist().getName() + "%");
+            ps.setString(1, album.getTitle());
+            ps.setString(2, album.getArtist().getName());
 
             rs = ps.executeQuery();
 
@@ -110,14 +110,14 @@ public class AlbumDAOJDBC implements AlbumDAO {
 
             int rowsAffected = ps.executeUpdate();
 
-            if (rowsAffected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    int idgenerated = rs.getInt(1);
-                    album.setId(idgenerated);
+            if (rowsAffected == 0) {
+                throw new dbException("No rows affected.");
+            }
 
-                    System.out.println("Album created with ID = " + idgenerated);
-                }
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                int idgenerated = rs.getInt(1);
+                album.setId(idgenerated);
             }
         }
         catch (SQLException sql) {
@@ -135,18 +135,17 @@ public class AlbumDAOJDBC implements AlbumDAO {
 
         try {
 
-            ps = conn.prepareStatement("UPDATE album SET artist_id = ? where id = ?");
+            ps = conn.prepareStatement("UPDATE album SET title = ?, release_year = ?, artist_id = ? where id = ?");
 
-            ps.setInt(1, album.getArtist().getId());
-            ps.setInt(2, album.getId());
+            ps.setString(1, album.getTitle());
+            ps.setDate(2, new Date(album.getRelease_year().getTime()));
+            ps.setInt(3, album.getArtist().getId());
+            ps.setInt(4, album.getId());
 
             int rowsAffected = ps.executeUpdate();
 
-            if (rowsAffected > 0) {
-                System.out.println("Updated!");
-            }
-            else {
-                System.out.println("Something went wrong. No rows updated.");
+            if (rowsAffected == 0) {
+                throw new dbException("No rows affected.");
             }
 
         }
@@ -172,8 +171,6 @@ public class AlbumDAOJDBC implements AlbumDAO {
 
             ps.executeUpdate();
 
-            System.out.println("Deleted ID = " + id);
-
         } catch (SQLException sql) {
             throw new dbException(sql.getMessage());
         }
@@ -191,7 +188,8 @@ public class AlbumDAOJDBC implements AlbumDAO {
 
         try {
 
-            ps = conn.prepareStatement("SELECT album.title, album.release_year, artist.name as \"name_artist\"\n" +
+            ps = conn.prepareStatement("SELECT album.id, album.title, album.release_year, " +
+                    "album.artist_id, artist.name as \"name_artist\"\n" +
                     "FROM album inner join artist on\n" +
                     "album.artist_id = artist.id\n" +
                     "where album.id = ?");
@@ -202,17 +200,9 @@ public class AlbumDAOJDBC implements AlbumDAO {
 
             if (rs.next()) {
 
-                Artist artist = new Artist();
+                Artist artist = instantializeArtist(rs);
 
-                artist.setName(rs.getString("name_artist"));
-
-                Album album = new Album();
-
-                album.setTitle(rs.getString("title"));
-                album.setRelease_year(rs.getDate("release_year"));
-                album.setArtist(artist);
-
-                return album;
+                return instantializeAlbum(rs, artist);
             }
 
             return null;

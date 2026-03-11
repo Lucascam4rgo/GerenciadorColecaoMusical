@@ -5,6 +5,9 @@ import model.dao.impl.ArtistDAOJDBC;
 import model.entities.Album;
 import model.entities.Artist;
 import model.entities.Track;
+import service.AlbumService;
+import service.ArtistService;
+import service.TrackService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,45 +23,48 @@ public class Program {
         AlbumDAO albumDAO = DaoFactory.createAlbumDao();
         TrackDAO trackDAO = DaoFactory.createTrackDao();
 
+        ArtistService artistService = new ArtistService(artistDao);
+        AlbumService albumService = new AlbumService(albumDAO, artistDao);
+        TrackService trackService = new TrackService(trackDAO, artistDao, albumDAO);
+
         // Teste 1 - Insert de Artista
-        //Artist artist = new Artist(null, "Paramore", "Rock", "United States");
-        //artistDao.save(artist);
+//        Artist artist = new Artist(null, "Mac Miller", "Hip Hop", "United States");
+//        artistService.createArtist(artist);
+//        System.out.println("Artist created successfully!");
 
         // Teste 2 - Update de Artista
-//        Artist artist = new Artist(10, "Clairo", "Bedroom Pop, Indie Pop, Lo-fi", null);
-//        artistDao.update(artist);
+//        Artist artist = new Artist(16, "Mac Miller", "Hip Hop, Pop Rap", null);
+//        artistService.updateArtist(artist);
+//        System.out.println("Artist updated successfully!");
 
         // Teste 3 - Deletando Artista
-        //artistDao.removeByID(9);
+//        artistService.removeArtistByID(16);
+//        System.out.println("Artist removed successfully");
+
 
         // Teste 4 - Achando pelo ID
-        //System.out.println(artistDao.searchByID(8));
+        //System.out.println(artistService.getArtist(10));
 
         // Teste 5 - Listando todos os artistas
-        /*List<Artist> artists = artistDao.listAll();
-
-        for (Artist artist: artists) {
-            System.out.println(artist);
-        }*/
+//        List<Artist> artists = artistService.listAllArtists();
+//
+//        for (Artist artist: artists) {
+//            System.out.println(artist);
+//        }
 
         // Teste 6 - Insert em album
-//        Album album = new Album(null, "Riot!", dfmt.parse("12/06/2007"), 15, null);
-//        Album album2 = new Album(null, "Brand New Eyes", dfmt.parse("25/09/2009"), 15, null);
-//        Album album3 = new Album(null, "This Is Why",
-//                dfmt.parse("10/02/2023"), 15, null);
+//        Album album = new Album(null, "CHROMAKOPIA", dfmt.parse("28/10/2024"),
+//                new Artist(1, null, null, null));
 //
-//        albumDAO.save(album);
-//        albumDAO.save(album2);
-//        albumDAO.save(album3);
+//        albumService.createAlbum(album);
+//        System.out.println("Album created successfully!");
 
         // Teste 7 - Albuns de um artista
-//        List<Album> albums = albumDAO.findByArtistId(6);
-//
-//        for (Album album: albums) {
-//            System.out.println("Álbum: ID = " + album.getId() + ", Title = " + album.getTitle() + ", Release Year = " +
-//                    album.getRelease_year() + ", Artist ID = " + album.getArtist().getId() + ", Artist Name = " +
-//                    album.getArtist().getName());
-//        }
+        List<Album> albums = albumService.findByArtistID(6);
+
+        for (Album album: albums) {
+            System.out.println(album);
+        }
 
         // Teste 8 - Update em album - Mudar artist_id
 //        Album album = new Album(36, null, null,
@@ -99,7 +105,7 @@ public class Program {
 
         // Teste 15 - List All dos tracks
 
-        trackDAO.listAll().forEach(System.out::println);
+//        trackDAO.listAll().forEach(System.out::println);
 
 
 

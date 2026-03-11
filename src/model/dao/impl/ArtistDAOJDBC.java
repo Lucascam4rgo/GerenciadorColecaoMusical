@@ -35,14 +35,15 @@ public class ArtistDAOJDBC implements ArtistDAO {
 
             int rowsAffected = ps.executeUpdate();
 
-            if (rowsAffected > 0) {
-                ResultSet IDs = ps.getGeneratedKeys();
+            if (rowsAffected == 0) {
+                throw new dbException("No rows affected.");
+            }
 
-                if (IDs.next()) {
-                    int id = IDs.getInt(1);
-                    System.out.println("Artist inserted with ID = " + id + "!");
-                    artist.setId(id);
-                }
+            ResultSet IDs = ps.getGeneratedKeys();
+
+            if (IDs.next()) {
+                int id = IDs.getInt(1);
+                artist.setId(id);
             }
         }
         catch (SQLException sql) {
@@ -60,15 +61,18 @@ public class ArtistDAOJDBC implements ArtistDAO {
 
         try {
 
-            ps = conn.prepareStatement("UPDATE artist SET name = ?, genre = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE artist SET name = ?, genre = ?, country = ? WHERE id = ?");
 
             ps.setString(1, artist.getName());
             ps.setString(2, artist.getGenre());
-            ps.setInt(3, artist.getId());
+            ps.setString(3, artist.getCountry());
+            ps.setInt(4, artist.getId());
 
-            ps.executeUpdate();
+            int rowsAffected = ps.executeUpdate();
 
-            System.out.println("Updated!");
+            if (rowsAffected == 0) {
+                throw new dbException("No artist found.");
+            }
 
         } catch (SQLException sql) {
             throw new dbException(sql.getMessage());
@@ -90,8 +94,8 @@ public class ArtistDAOJDBC implements ArtistDAO {
 
             int rowsAffected = ps.executeUpdate();
 
-            if (rowsAffected > 0) {
-                System.out.println("Deleted ID " + id);
+            if (rowsAffected == 0) {
+                throw new dbException("No artist found.");
             }
 
         } catch (SQLException sql) {
@@ -120,7 +124,7 @@ public class ArtistDAOJDBC implements ArtistDAO {
 
             return null;
 
-        } catch (Exception sql) {
+        } catch (SQLException sql) {
             throw new dbException(sql.getMessage());
         }
         finally {

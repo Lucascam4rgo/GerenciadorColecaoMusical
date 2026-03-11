@@ -39,12 +39,14 @@ public class TrackDAOJDBC implements TrackDAO {
 
             int rowsAffected = ps.executeUpdate();
 
-            if (rowsAffected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
+            if (rowsAffected == 0) {
+                throw new dbException("No rows affected.");
+            }
 
-                if(rs.next()) {
-                    track.setId(rs.getInt(1));
-                }
+            ResultSet rs = ps.getGeneratedKeys();
+
+            if(rs.next()) {
+                track.setId(rs.getInt(1));
             }
 
         }
@@ -64,11 +66,12 @@ public class TrackDAOJDBC implements TrackDAO {
 
         try {
 
-            ps = conn.prepareStatement("UPDATE track SET title=? where id=?");
+            ps = conn.prepareStatement("UPDATE track SET title=?, duration = ?, album_id = ? where id=?");
 
             ps.setString(1, track.getTitle());
-
-            ps.setInt(2, track.getId());
+            ps.setInt(2, track.getDuration());
+            ps.setInt(3, track.getAlbum().getId());
+            ps.setInt(4, track.getId());
 
             ps.executeUpdate();
 

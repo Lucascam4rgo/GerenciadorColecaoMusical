@@ -66,11 +66,7 @@ public class Artist {
 
     @Override
     public String toString() {
-        return "Artist{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", genre='" + genre + '\'' +
-                ", country='" + country + '\'' +
-                '}';
+        return "Artist found: ID = " + id + ", Name = " + name + "," +
+                " Genre = " + genre + ", Country = " + country;
     }
 }
